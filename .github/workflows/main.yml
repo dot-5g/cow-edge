@@ -19,7 +19,7 @@ jobs:
           go-version-file: "go.mod"
 
       - name: Build
-        run: go build
+        run: go build cmd/cow-edge/main.go
 
   go-vet:
     runs-on: ubuntu-latest
