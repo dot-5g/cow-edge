@@ -58,3 +58,13 @@ jobs:
 
       - name: Unit tests
         run: go test -cover ./...
+
+  build-snap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build snap locally
+        uses: snapcore/action-build@v1.2.0
+        id: snapcraft

@@ -1,0 +1,19 @@
+name: cow-edge
+base: core22
+version: '0.0.1'
+summary: Cow Edge Network
+description: Cow Edge Network
+
+grade: devel
+confinement: devmode
+
+apps:
+  cow-edge:
+    command: bin/cow-edge
+
+parts:
+  my-part:
+    build-snaps:
+      - go/1.21/stable
+    plugin: go
+    source: .
