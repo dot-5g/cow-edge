@@ -18,7 +18,7 @@ var pfcpAssociation PFCPAssociation
 
 func IsKnownNodeID(nodeID ie.NodeID) bool {
 	for _, id := range pfcpAssociation.NodeIDs {
-		if id.NodeIDType == nodeID.NodeIDType && bytes.Equal(id.NodeIDValue, nodeID.NodeIDValue) {
+		if id.Type == nodeID.Type && bytes.Equal(id.Value, nodeID.Value) {
 			return true
 		}
 	}
@@ -27,14 +27,14 @@ func IsKnownNodeID(nodeID ie.NodeID) bool {
 
 func HandlePFCPAssociationSetupRequest(sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
 	var nodeIDAddress string
-	nodeIDType := msg.NodeID.NodeIDType
+	nodeIDType := msg.NodeID.Type
 	if nodeIDType == ie.IPv4 {
-		nodeIDAddress = net.IP(msg.NodeID.NodeIDValue).String()
+		nodeIDAddress = net.IP(msg.NodeID.Value).String()
 	}
 	log.Printf("Received PFCP Association Setup Request from Node %v", nodeIDAddress)
 	nodeID := msg.NodeID
 	if IsKnownNodeID(nodeID) {
-		log.Printf("Node ID %v is already known\n", nodeID)
+		log.Printf("Node ID %v is already known\n", nodeIDAddress)
 		return
 	}
 
