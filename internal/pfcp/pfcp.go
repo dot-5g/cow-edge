@@ -1,7 +1,6 @@
 package pfcp
 
 import (
-	"bytes"
 	"log"
 	"net"
 	"time"
@@ -11,33 +10,6 @@ import (
 	"github.com/dot-5g/pfcp/messages"
 )
 
-type UPFContext struct {
-	NodeID       ie.NodeID
-	KnownNodeIDs []ie.NodeID
-}
-
-var clients map[string]*client.Pfcp = make(map[string]*client.Pfcp)
-
-func IsKnownNodeID(upfContext UPFContext, nodeID ie.NodeID) bool {
-	for _, id := range upfContext.KnownNodeIDs {
-		if id.Type == nodeID.Type && bytes.Equal(id.Value, nodeID.Value) {
-			return true
-		}
-	}
-	return false
-}
-
-func getClientForAddress(addr net.Addr) *client.Pfcp {
-	addrStr := addr.String()
-	if cl, exists := clients[addrStr]; exists {
-		return cl
-	}
-
-	cl := client.New(addrStr)
-	clients[addrStr] = cl
-	return cl
-}
-
 func getNodeAddress(nodeID ie.NodeID) string {
 	var nodeIDaddress string
 	if nodeID.Type == ie.IPv4 || nodeID.Type == ie.IPv6 {
@@ -45,30 +17,24 @@ func getNodeAddress(nodeID ie.NodeID) string {
 	} else {
 		nodeIDaddress = string(nodeID.Value)
 	}
-
 	return nodeIDaddress
 }
 
-func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, addr net.Addr, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
-	var cause ie.Cause
-	var recoveryTimeStamp ie.RecoveryTimeStamp
-	var err error
-
-	pfcpClient := getClientForAddress(addr)
+func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, pfcpClient client.PfcpClienter, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
 	remoteNodeIDAddress := getNodeAddress(msg.NodeID)
 	log.Printf("Received PFCP Association Setup Request from Node %v", remoteNodeIDAddress)
 	remoteNodeID := msg.NodeID
-	if IsKnownNodeID(*upfContext, remoteNodeID) {
+	if upfContext.IsKnownNodeID(remoteNodeID) {
 		log.Printf("Node ID %v is already known\n", remoteNodeIDAddress)
 		return
 	}
-	upfContext.KnownNodeIDs = append(upfContext.KnownNodeIDs, msg.NodeID)
-	cause, err = ie.NewCause(ie.RequestAccepted)
+	upfContext.AddKnownNodeID(msg.NodeID)
+	cause, err := ie.NewCause(ie.RequestAccepted)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	recoveryTimeStamp, err = ie.NewRecoveryTimeStamp(time.Now())
+	recoveryTimeStamp, err := ie.NewRecoveryTimeStamp(time.Now())
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -80,4 +46,29 @@ func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, addr net.Addr, se
 	}
 	pfcpClient.SendPFCPAssociationSetupResponse(pfcpAssociationSetupResponse, sequenceNumber)
 	log.Printf("Node ID %v added to known node IDs\n", remoteNodeIDAddress)
+}
+
+func HandlePFCPAssociationReleaseRequest(upfContext *UPFContext, pfcpClient client.PfcpClienter, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
+	//TODO: Delete all the PFCP sessions related to that PFCP association locally;
+	remoteNodeIDAddress := getNodeAddress(msg.NodeID)
+	log.Printf("Received PFCP Association Release Request from Node %v", remoteNodeIDAddress)
+
+	//Delete the PFCP association and any related information (e.g. Node ID of the CP function)
+	remoteNodeID := msg.NodeID
+	if upfContext.IsKnownNodeID(remoteNodeID) {
+		upfContext.RemoveKnownNodeID(remoteNodeID)
+	}
+
+	//Send a PFCP Association Release Response with a successful cause.
+	cause, err := ie.NewCause(ie.RequestAccepted)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	pfcpAssociationReleaseResponse := messages.PFCPAssociationReleaseResponse{
+		NodeID: upfContext.NodeID,
+		Cause:  cause,
+	}
+	pfcpClient.SendPFCPAssociationReleaseResponse(pfcpAssociationReleaseResponse, sequenceNumber)
+	log.Printf("Node ID %v removed from known node IDs\n", remoteNodeIDAddress)
 }
