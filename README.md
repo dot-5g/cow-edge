@@ -2,8 +2,16 @@
 
 Edge module for the cow project.
 
-## Installation
+## Usage
+
+### Installation
 
 ```bash
 sudo snap install cow-edge
+```
+
+### Run Cow Edge
+
+```bash
+cow-edge --config=config.yaml
 ```
