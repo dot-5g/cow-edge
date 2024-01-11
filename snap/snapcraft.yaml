@@ -5,15 +5,24 @@ summary: Cow Edge Network
 description: Cow Edge Network
 
 grade: devel
-confinement: devmode
+confinement: strict
 
 apps:
   cow-edge:
-    command: bin/cow-edge
+    command: bin/cow-edge --config $SNAP/config/config.yaml
+    plugs: 
+      - network-bind
 
 parts:
-  my-part:
+  cow-edge:
     build-snaps:
       - go/1.21/stable
     plugin: go
     source: .
+
+  config:
+    plugin: dump
+    source: config.yaml
+    source-type: file
+    organize:
+      config.yaml: config/config.yaml

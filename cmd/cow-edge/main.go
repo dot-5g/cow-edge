@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/dot-5g/cow-edge/internal/config"
@@ -11,16 +12,20 @@ import (
 	"github.com/dot-5g/pfcp/server"
 )
 
-var nodeID ie.NodeID
+var configFilePath string
+
+func init() {
+	flag.StringVar(&configFilePath, "config", "config.yaml", "Path to the config file")
+}
 
 func main() {
-	var err error
-	config, err := config.ReadConfig("config.yaml")
+	flag.Parse()
+	config, err := config.ReadConfig(configFilePath)
 	if err != nil {
 		log.Fatalf("Failed to read config: %v", err)
 	}
 	pfcpServer := server.New("localhost:8805")
-	nodeID, err = ie.NewNodeID(config.UPF.NodeID)
+	nodeID, err := ie.NewNodeID(config.UPF.NodeID)
 	if err != nil {
 		log.Fatal(err)
 		return
