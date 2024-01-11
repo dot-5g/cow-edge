@@ -1,8 +1,14 @@
 name: cow-edge
+title: Cow Edge Network
 base: core22
 version: '0.0.1'
-summary: Cow Edge Network
-description: Cow Edge Network
+summary: Edge component of the Cow network.
+description: Edge component of the Cow network.
+license: Apache-2.0
+source-code: https://github.com/dot-5g/cow-edge
+issues: https://github.com/dot-5g/cow-edge/issues
+architectures:
+  - amd64
 
 grade: devel
 confinement: strict

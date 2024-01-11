@@ -1,6 +1,6 @@
 # cow-edge
 
-Edge module for the cow project.
+Edge component of the Cow network.
 
 ## Usage
 
