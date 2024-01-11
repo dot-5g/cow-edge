@@ -88,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Downloads locally built snap artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         id: download
         with:
           name: snap
