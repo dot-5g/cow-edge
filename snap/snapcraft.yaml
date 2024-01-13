@@ -18,11 +18,16 @@ apps:
     command: bin/cow-edge --config $SNAP/config/config.yaml
     plugs: 
       - network-bind
+      - network-control
 
 parts:
   cow-edge:
     build-snaps:
       - go/1.21/stable
+    build-packages:
+      - libpcap-dev
+    stage-packages:
+      - libpcap0.8
     plugin: go
     source: .
 

@@ -8,7 +8,8 @@ import (
 
 type Config struct {
 	UPF struct {
-		NodeID string `yaml:"nodeID"`
+		NodeID    string `yaml:"nodeID"`
+		Interface string `yaml:"interface"`
 	} `yaml:"upf"`
 }
 

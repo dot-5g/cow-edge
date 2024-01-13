@@ -32,7 +32,7 @@ func main() {
 		return
 	}
 	upfContext := &pfcp.UPFContext{NodeID: nodeID}
-	go packet.CapturePackets("eth0", upfContext)
+	go packet.CapturePackets(config.UPF.Interface, upfContext)
 
 	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
 		pfcp.HandlePFCPAssociationSetupRequest(upfContext, pfcpClient, sequenceNumber, msg)

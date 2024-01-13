@@ -18,6 +18,11 @@ type SessionContext struct {
 	CreateFAR ie.CreateFAR
 }
 
+// Find Matching PDR of the PFCP session with the highest precedence
+func (session *SessionContext) GetPDRWithHighestPrecedence() *ie.CreatePDR {
+	return nil
+}
+
 func (upfContext *UPFContext) GetKnownNodeIDs() []ie.NodeID {
 	return upfContext.KnownNodeIDs
 }

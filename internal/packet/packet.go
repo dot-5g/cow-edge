@@ -1,78 +1,87 @@
 package packet
 
 import (
+	"fmt"
 	"log"
-	"net"
+	"os"
 
 	"github.com/dot-5g/cow-edge/internal/pfcp"
 	"github.com/dot-5g/pfcp/ie"
 	"github.com/google/gopacket"
+	"github.com/google/gopacket/afpacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 )
 
-func CapturePackets(interfaceName string, upfContext *pfcp.UPFContext) {
-	handle, err := pcap.OpenLive(interfaceName, 1600, true, pcap.BlockForever)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer handle.Close()
+const (
+	bufferSize = 8
+	snaplen    = 65535
+)
 
-	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
-	for packet := range packetSource.Packets() {
-		go processPacket(packet, upfContext) // Pass the UPF context to processPacket
+func CapturePackets(interfaceName string, upfContext *pfcp.UPFContext) {
+	tpacket, err := setupPacketCapture(interfaceName)
+	if err != nil {
+		log.Fatalf("setupPacketCapture: %v", err)
 	}
+	defer tpacket.Close()
+
+	packetSource := gopacket.NewPacketSource(tpacket, layers.LinkTypeEthernet)
+	for packet := range packetSource.Packets() {
+		go processPacket(packet, upfContext)
+	}
+}
+
+func setupPacketCapture(interfaceName string) (*afpacket.TPacket, error) {
+	szFrame, szBlock, numBlocks, err := computeAfpacketSize(bufferSize, snaplen)
+	if err != nil {
+		return nil, fmt.Errorf("computeAfpacketSize: %w", err)
+	}
+
+	tpacket, err := afpacket.NewTPacket(
+		afpacket.OptInterface(interfaceName),
+		afpacket.OptFrameSize(szFrame),
+		afpacket.OptBlockSize(szBlock),
+		afpacket.OptNumBlocks(numBlocks),
+		afpacket.OptPollTimeout(pcap.BlockForever),
+	)
+	return tpacket, err
+}
+
+func computeAfpacketSize(targetSizeMb int, snaplen int) (int, int, int, error) {
+	pageSize := os.Getpagesize()
+	frameSize := max(snaplen, pageSize)
+	blockSize := frameSize * 128
+	numBlocks := (targetSizeMb * 1024 * 1024) / blockSize
+
+	if numBlocks == 0 {
+		return 0, 0, 0, fmt.Errorf("interface buffer size is too small")
+	}
+
+	return frameSize, blockSize, numBlocks, nil
 }
 
 func processPacket(packet gopacket.Packet, upfContext *pfcp.UPFContext) {
-	// Extract packet details
-	srcIP, dstIP := getIPAddresses(packet)
-	srcPort, dstPort := getPortNumbers(packet)
-	protocol := getProtocol(packet)
-
-	// Iterate over sessions in the UPF context
-	for _, session := range upfContext.Sessions {
-		pdr := session.CreatePDR // Assuming each session has one CreatePDR
-		if matchesPDR(pdr, srcIP, dstIP, srcPort, dstPort, protocol) {
-			applyPDRActions(pdr, packet)
-			break // Stop after finding the first matching PDR
-		}
+	pfcpSession := GetPFCPSession()
+	pfcpSessionPDR := pfcpSession.GetPDRWithHighestPrecedence()
+	if pfcpSessionPDR == nil {
+		return
 	}
+	applyPDRInstructions(*pfcpSessionPDR, packet)
 }
 
-func matchesPDR(pdr ie.CreatePDR, srcIP, dstIP net.IP, srcPort, dstPort int, protocol string) bool {
-	// Implement logic to check if the packet matches the PDR criteria
-	// Compare packet details with PDR fields like source/destination IP, ports, etc.
-	return true // Placeholder, implement actual matching logic
+// Fubd PFCP session with a matching PDR
+func GetPFCPSession() *pfcp.SessionContext {
+	// Implement logic to get the PFCP session from the UPF context
+	return nil
 }
 
-func applyPDRActions(pdr ie.CreatePDR, packet gopacket.Packet) {
+// Apply Instructions set in the PDR
+func applyPDRInstructions(pdr ie.CreatePDR, packet gopacket.Packet) {
 	// Implement the actions as per the PDR
 	// For example, forwarding the packet, modifying it, or dropping it
-}
 
-func getIPAddresses(packet gopacket.Packet) (net.IP, net.IP) {
-	ipLayer := packet.Layer(layers.LayerTypeIPv4)
-	if ipLayer != nil {
-		ip, _ := ipLayer.(*layers.IPv4)
-		return ip.SrcIP, ip.DstIP
-	}
-	// Handle IPv6 similarly if needed
-	return nil, nil
-}
+	fmt.Printf("PDR ID: %v\n", pdr.PDRID)
+	fmt.Printf("Precedence: %v\n", pdr.Precedence)
+	fmt.Printf("PDI: %v\n", pdr.PDI)
 
-func getPortNumbers(packet gopacket.Packet) (int, int) {
-	tcpLayer := packet.Layer(layers.LayerTypeTCP)
-	if tcpLayer != nil {
-		tcp, _ := tcpLayer.(*layers.TCP)
-		return int(tcp.SrcPort), int(tcp.DstPort)
-	}
-	// Handle other protocols (UDP, etc.) similarly if needed
-	return 0, 0
-}
-
-func getProtocol(packet gopacket.Packet) string {
-	// Implement logic to return the protocol (e.g., "TCP", "UDP")
-	// This could be based on which layer is present in the packet
-	return ""
 }
