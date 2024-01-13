@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/dot-5g/cow-edge/internal/config"
+	"github.com/dot-5g/cow-edge/internal/packet"
 	"github.com/dot-5g/cow-edge/internal/pfcp"
 	"github.com/dot-5g/pfcp/client"
 	"github.com/dot-5g/pfcp/ie"
@@ -30,13 +31,17 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	pfcpContext := &pfcp.UPFContext{NodeID: nodeID}
+	upfContext := &pfcp.UPFContext{NodeID: nodeID}
+	go packet.CapturePackets("eth0", upfContext)
 
 	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
-		pfcp.HandlePFCPAssociationSetupRequest(pfcpContext, pfcpClient, sequenceNumber, msg)
+		pfcp.HandlePFCPAssociationSetupRequest(upfContext, pfcpClient, sequenceNumber, msg)
 	})
 	pfcpServer.PFCPAssociationReleaseRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
-		pfcp.HandlePFCPAssociationReleaseRequest(pfcpContext, pfcpClient, sequenceNumber, msg)
+		pfcp.HandlePFCPAssociationReleaseRequest(upfContext, pfcpClient, sequenceNumber, msg)
+	})
+	pfcpServer.PFCPSessionEstablishmentRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, seid uint64, msg messages.PFCPSessionEstablishmentRequest) {
+		pfcp.HandlePFCPSessionEstablishmentRequest(upfContext, pfcpClient, sequenceNumber, seid, msg)
 	})
 	pfcpServer.Run()
 	defer pfcpServer.Close()

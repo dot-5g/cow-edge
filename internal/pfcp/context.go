@@ -9,6 +9,13 @@ import (
 type UPFContext struct {
 	NodeID       ie.NodeID
 	KnownNodeIDs []ie.NodeID
+	Sessions     []SessionContext
+}
+
+type SessionContext struct {
+	CPFSEID   ie.FSEID
+	CreatePDR ie.CreatePDR
+	CreateFAR ie.CreateFAR
 }
 
 func (upfContext *UPFContext) GetKnownNodeIDs() []ie.NodeID {
