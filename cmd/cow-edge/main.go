@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/dot-5g/cow-edge/internal/config"
-	"github.com/dot-5g/cow-edge/internal/packet"
 	"github.com/dot-5g/cow-edge/internal/pfcp"
 	"github.com/dot-5g/pfcp/client"
 	"github.com/dot-5g/pfcp/ie"
@@ -32,7 +31,6 @@ func main() {
 		return
 	}
 	upfContext := &pfcp.UPFContext{NodeID: nodeID}
-	go packet.CapturePackets(config.UPF.Interface, upfContext)
 
 	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
 		pfcp.HandlePFCPAssociationSetupRequest(upfContext, pfcpClient, sequenceNumber, msg)

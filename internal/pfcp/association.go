@@ -24,11 +24,14 @@ func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, pfcpClient client
 	remoteNodeIDAddress := getNodeAddress(msg.NodeID)
 	log.Printf("Received PFCP Association Setup Request from Node %v", remoteNodeIDAddress)
 	remoteNodeID := msg.NodeID
-	if upfContext.IsKnownNodeID(remoteNodeID) {
+	if upfContext.IsKnownPFCPAssociation(remoteNodeID) {
 		log.Printf("Node ID %v is already known\n", remoteNodeIDAddress)
 		return
 	}
-	upfContext.AddKnownNodeID(msg.NodeID)
+	newAssociation := PFCPAssociation{
+		NodeID: remoteNodeID,
+	}
+	upfContext.AddPFCPAssociation(newAssociation)
 	cause, err := ie.NewCause(ie.RequestAccepted)
 	if err != nil {
 		log.Fatal(err)
@@ -55,8 +58,8 @@ func HandlePFCPAssociationReleaseRequest(upfContext *UPFContext, pfcpClient clie
 
 	//Delete the PFCP association and any related information (e.g. Node ID of the CP function)
 	remoteNodeID := msg.NodeID
-	if upfContext.IsKnownNodeID(remoteNodeID) {
-		upfContext.RemoveKnownNodeID(remoteNodeID)
+	if upfContext.IsKnownPFCPAssociation(remoteNodeID) {
+		upfContext.RemovePFCPAssociation(remoteNodeID)
 	}
 
 	//Send a PFCP Association Release Response with a successful cause.
