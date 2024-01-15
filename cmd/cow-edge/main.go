@@ -30,13 +30,16 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	pfcpContext := &pfcp.UPFContext{NodeID: nodeID}
+	upfContext := &pfcp.UPFContext{NodeID: nodeID}
 
 	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
-		pfcp.HandlePFCPAssociationSetupRequest(pfcpContext, pfcpClient, sequenceNumber, msg)
+		pfcp.HandlePFCPAssociationSetupRequest(upfContext, pfcpClient, sequenceNumber, msg)
 	})
 	pfcpServer.PFCPAssociationReleaseRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
-		pfcp.HandlePFCPAssociationReleaseRequest(pfcpContext, pfcpClient, sequenceNumber, msg)
+		pfcp.HandlePFCPAssociationReleaseRequest(upfContext, pfcpClient, sequenceNumber, msg)
+	})
+	pfcpServer.PFCPSessionEstablishmentRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, seid uint64, msg messages.PFCPSessionEstablishmentRequest) {
+		pfcp.HandlePFCPSessionEstablishmentRequest(upfContext, pfcpClient, sequenceNumber, seid, msg)
 	})
 	pfcpServer.Run()
 	defer pfcpServer.Close()

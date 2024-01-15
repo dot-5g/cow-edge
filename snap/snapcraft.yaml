@@ -19,6 +19,7 @@ apps:
     plugs: 
       - network-bind
 
+
 parts:
   cow-edge:
     build-snaps:

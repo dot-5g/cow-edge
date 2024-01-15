@@ -4,15 +4,9 @@ import (
 	"testing"
 
 	"github.com/dot-5g/cow-edge/internal/pfcp"
-	"github.com/dot-5g/pfcp/client"
 	"github.com/dot-5g/pfcp/ie"
 	"github.com/dot-5g/pfcp/messages"
 )
-
-type MockPfcpClient struct {
-	client.Pfcp
-	Sent bool // Indicates whether a response was sent
-}
 
 func (m *MockPfcpClient) SendPFCPAssociationSetupResponse(response messages.PFCPAssociationSetupResponse, sequenceNumber uint32) error {
 	m.Sent = true
@@ -39,11 +33,11 @@ func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDAdded
 
 	pfcp.HandlePFCPAssociationSetupRequest(context, pfcpClient, sequenceNumber, message)
 
-	if len(context.KnownNodeIDs) != 1 {
-		t.Fatalf("Expected 1 known node ID, got %d", len(context.KnownNodeIDs))
+	if len(context.PFCPAssociations) != 1 {
+		t.Fatalf("Expected 1 PFCP association, got %d", len(context.PFCPAssociations))
 	}
 
-	if !context.IsKnownNodeID(nodeID) {
+	if !context.IsKnownPFCPAssociation(nodeID) {
 		t.Fatalf("Expected node ID %v to be known", nodeID)
 	}
 
@@ -54,10 +48,12 @@ func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAdd
 	if err != nil {
 		t.Fatal(err)
 	}
+	pfcpAssociation := pfcp.PFCPAssociation{
+		NodeID: knownNodeID,
+	}
+
 	context := &pfcp.UPFContext{
-		KnownNodeIDs: []ie.NodeID{
-			knownNodeID,
-		},
+		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
 	}
 	sequenceNumber := uint32(1)
 	nodeID, err := ie.NewNodeID("1.2.3.4")
@@ -71,11 +67,11 @@ func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAdd
 
 	pfcp.HandlePFCPAssociationSetupRequest(context, pfcpClient, sequenceNumber, message)
 
-	if len(context.KnownNodeIDs) != 1 {
-		t.Fatalf("Expected 1 known node ID, got %d", len(context.KnownNodeIDs))
+	if len(context.PFCPAssociations) != 1 {
+		t.Fatalf("Expected 1 PFCP association, got %d", len(context.PFCPAssociations))
 	}
 
-	if !context.IsKnownNodeID(knownNodeID) {
+	if !context.IsKnownPFCPAssociation(knownNodeID) {
 		t.Fatalf("Expected node ID %v to be known", knownNodeID)
 	}
 
