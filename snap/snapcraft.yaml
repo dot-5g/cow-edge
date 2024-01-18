@@ -15,11 +15,11 @@ confinement: strict
 
 apps:
   cow-edge:
-    command: bin/cow-edge --config $SNAP/config/config.yaml
+    command: bin/cow-edge
     plugs: 
       - network-bind
       - network-control
-
+      - home
 
 parts:
   cow-edge:

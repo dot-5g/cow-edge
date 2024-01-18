@@ -13,10 +13,7 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
-const (
-	bufferSize = 8
-	snaplen    = 65535
-)
+const bufferSize = 8
 
 func CapturePackets(interfaceName string, upfContext *pfcp.UPFContext) {
 	tpacket, err := setupPacketCapture(interfaceName)
@@ -32,7 +29,7 @@ func CapturePackets(interfaceName string, upfContext *pfcp.UPFContext) {
 }
 
 func setupPacketCapture(interfaceName string) (*afpacket.TPacket, error) {
-	szFrame, szBlock, numBlocks, err := computeAfpacketSize(bufferSize, snaplen)
+	szFrame, szBlock, numBlocks, err := computeAfpacketSize(bufferSize)
 	if err != nil {
 		return nil, fmt.Errorf("computeAfpacketSize: %w", err)
 	}
@@ -44,12 +41,14 @@ func setupPacketCapture(interfaceName string) (*afpacket.TPacket, error) {
 		afpacket.OptNumBlocks(numBlocks),
 		afpacket.OptPollTimeout(pcap.BlockForever),
 	)
-	return tpacket, err
+	if err != nil {
+		return nil, fmt.Errorf("could not read packets on interface %s: %w", interfaceName, err)
+	}
+	return tpacket, nil
 }
 
-func computeAfpacketSize(targetSizeMb int, snaplen int) (int, int, int, error) {
-	pageSize := os.Getpagesize()
-	frameSize := max(snaplen, pageSize)
+func computeAfpacketSize(targetSizeMb int) (int, int, int, error) {
+	frameSize := os.Getpagesize()
 	blockSize := frameSize * 128
 	numBlocks := (targetSizeMb * 1024 * 1024) / blockSize
 

@@ -8,10 +8,11 @@ Edge component of the Cow network.
 
 ```bash
 sudo snap install cow-edge
+sudo snap connect cow-edge:network-control
 ```
 
 ### Run Cow Edge
 
 ```bash
-cow-edge --config=config.yaml
+sudo cow-edge --config=/snap/cow-edge/current/config/config.yaml
 ```
