@@ -20,7 +20,7 @@ func TestGivenUnknownSessionWhenHandlePFCPSessionEstablishmentRequestThenSession
 		t.Fatal(err)
 	}
 	pfcpAssociation := pfcp.PFCPAssociation{
-		NodeID: nodeID,
+		NodeID: nodeIDValue,
 	}
 	upfContext := &pfcp.UPFContext{
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
@@ -39,7 +39,7 @@ func TestGivenUnknownSessionWhenHandlePFCPSessionEstablishmentRequestThenSession
 		t.Fatalf("Expected 1 PFCP association, got %d", len(upfContext.PFCPAssociations))
 	}
 
-	if !upfContext.IsKnownPFCPAssociation(nodeID) {
+	if !upfContext.IsKnownPFCPAssociation(nodeIDValue) {
 		t.Fatalf("Expected node ID %v to be known", nodeID)
 	}
 
@@ -56,7 +56,7 @@ func TestGivenUnknownSessionWhenHandlePFCPSessionEstablishmentRequestThenPFCPRes
 		t.Fatal(err)
 	}
 	pfcpAssociation := pfcp.PFCPAssociation{
-		NodeID: nodeID,
+		NodeID: nodeIDValue,
 	}
 	upfContext := &pfcp.UPFContext{
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},

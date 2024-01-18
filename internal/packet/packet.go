@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/dot-5g/cow-edge/internal/pfcp"
-	"github.com/dot-5g/pfcp/ie"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/afpacket"
 	"github.com/google/gopacket/layers"
@@ -69,7 +68,7 @@ func processPacket(packet gopacket.Packet, upfContext *pfcp.UPFContext) {
 }
 
 // Apply Instructions set in the PDR
-func applyPDRInstructions(pdr ie.CreatePDR, packet gopacket.Packet) {
+func applyPDRInstructions(pdr pfcp.PDR, packet gopacket.Packet) {
 	// Implement the actions as per the PDR
 	// For example, forwarding the packet, modifying it, or dropping it
 
