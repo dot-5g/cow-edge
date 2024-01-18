@@ -39,6 +39,16 @@ func (upfContext *UPFContext) GetPFCPAssociation(nodeID ie.NodeID) *PFCPAssociat
 	return nil
 }
 
+func (upfContext *UPFContext) GetPFCPSession() *SessionContext {
+	// Implement logic to get the PFCP session from the UPF context
+	return nil
+}
+
+func (session *SessionContext) GetPDRWithHighestPrecedence() *ie.CreatePDR {
+	// Implement logic to get the PDR with the highest precedence from the session context
+	return nil
+}
+
 func (upfContext *UPFContext) RemovePFCPAssociation(nodeID ie.NodeID) {
 	for i, id := range upfContext.PFCPAssociations {
 		if id.NodeID.Type == nodeID.Type && bytes.Equal(id.NodeID.Value, nodeID.Value) {

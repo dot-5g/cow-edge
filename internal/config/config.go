@@ -7,10 +7,8 @@ import (
 )
 
 type Config struct {
-	UPF struct {
-		NodeID    string `yaml:"nodeID"`
-		Interface string `yaml:"interface"`
-	} `yaml:"upf"`
+	NodeID    string `yaml:"nodeID"`
+	Interface string `yaml:"interface"`
 }
 
 func ReadConfig(configPath string) (*Config, error) {
