@@ -10,7 +10,7 @@ import (
 )
 
 func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, pfcpClient client.PfcpClienter, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
-	remoteNodeIDAddress := NodeIDToString(msg.NodeID)
+	remoteNodeIDAddress := msg.NodeID.String()
 	log.Printf("Received PFCP Association Setup Request from Node %v", remoteNodeIDAddress)
 	if upfContext.IsKnownPFCPAssociation(remoteNodeIDAddress) {
 		log.Printf("Node ID %v is already known\n", remoteNodeIDAddress)
@@ -46,7 +46,7 @@ func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, pfcpClient client
 
 func HandlePFCPAssociationReleaseRequest(upfContext *UPFContext, pfcpClient client.PfcpClienter, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
 	//TODO: Delete all the PFCP sessions related to that PFCP association locally;
-	remoteNodeIDAddress := NodeIDToString(msg.NodeID)
+	remoteNodeIDAddress := msg.NodeID.String()
 	log.Printf("Received PFCP Association Release Request from Node %v", remoteNodeIDAddress)
 
 	//Delete the PFCP association and any related information (e.g. Node ID of the CP function)

@@ -1,24 +1,5 @@
 package pfcp
 
-import (
-	"net"
-
-	"github.com/dot-5g/pfcp/ie"
-)
-
-func NodeIDToString(nodeID ie.NodeID) string {
-	switch nodeID.Type {
-	case ie.IPv4:
-		return net.IP(nodeID.Value).To4().String()
-	case ie.IPv6:
-		return net.IP(nodeID.Value).To16().String()
-	case ie.FQDN:
-		return string(nodeID.Value)
-	default:
-		return ""
-	}
-}
-
 type SourceInterface struct {
 	Value int
 }

@@ -54,7 +54,7 @@ func HandlePFCPSessionEstablishmentRequest(upfContext *UPFContext, pfcpClient cl
 	}
 
 	// Apply the rules received in the request
-	cpNodeID := NodeIDToString(msg.NodeID)
+	cpNodeID := msg.NodeID.String()
 	pfcpAssociation := upfContext.GetPFCPAssociation(cpNodeID)
 	if pfcpAssociation == nil {
 		log.Printf("Node ID %v is not known\n", msg.NodeID)

@@ -29,13 +29,13 @@ func main() {
 
 	go packet.CapturePackets(config.Interface, upfContext)
 
-	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
+	pfcpServer.PFCPAssociationSetupRequest(func(pfcpClient *client.PFCP, sequenceNumber uint32, msg messages.PFCPAssociationSetupRequest) {
 		pfcp.HandlePFCPAssociationSetupRequest(upfContext, pfcpClient, sequenceNumber, msg)
 	})
-	pfcpServer.PFCPAssociationReleaseRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
+	pfcpServer.PFCPAssociationReleaseRequest(func(pfcpClient *client.PFCP, sequenceNumber uint32, msg messages.PFCPAssociationReleaseRequest) {
 		pfcp.HandlePFCPAssociationReleaseRequest(upfContext, pfcpClient, sequenceNumber, msg)
 	})
-	pfcpServer.PFCPSessionEstablishmentRequest(func(pfcpClient *client.Pfcp, sequenceNumber uint32, seid uint64, msg messages.PFCPSessionEstablishmentRequest) {
+	pfcpServer.PFCPSessionEstablishmentRequest(func(pfcpClient *client.PFCP, sequenceNumber uint32, seid uint64, msg messages.PFCPSessionEstablishmentRequest) {
 		pfcp.HandlePFCPSessionEstablishmentRequest(upfContext, pfcpClient, sequenceNumber, seid, msg)
 	})
 	pfcpServer.Run()
