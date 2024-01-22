@@ -1,5 +1,5 @@
-github.com/dot-5g/pfcp v0.0.5 h1:h/pL7gjHC+FYUAu0oE/zY7NFPWagtx0Qs3HxooCeETI=
-github.com/dot-5g/pfcp v0.0.5/go.mod h1:ioecs6SimCnt6syVR0WJxO5vXod68l8g35wv9Czf8gE=
+github.com/dot-5g/pfcp v0.0.6 h1:LhdK4P+akbwQVTC7IvbiNqNT1sWd0XWV7mS/LrK3EnE=
+github.com/dot-5g/pfcp v0.0.6/go.mod h1:ioecs6SimCnt6syVR0WJxO5vXod68l8g35wv9Czf8gE=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=
