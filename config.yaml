@@ -1,3 +1,2 @@
-edge:
-  nodeID: "1.2.3.5"
-  interface: "eth0"
+nodeID: "1.2.3.5"
+interface: "enp3s0"

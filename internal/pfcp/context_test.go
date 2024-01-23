@@ -1,19 +1,14 @@
 package pfcp_test
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/dot-5g/cow-edge/internal/pfcp"
-	"github.com/dot-5g/pfcp/ie"
 )
 
 func TestGivenNoPFCPAssociationWhenGetPFCPAssociationThenReturnsNil(t *testing.T) {
 	upfContext := &pfcp.UPFContext{}
-	nodeID, err := ie.NewNodeID("1.2.3.4")
-	if err != nil {
-		t.Fatal(err)
-	}
+	nodeID := "1.2.3.4"
 
 	pfcpAssociation := upfContext.GetPFCPAssociation(nodeID)
 
@@ -23,43 +18,34 @@ func TestGivenNoPFCPAssociationWhenGetPFCPAssociationThenReturnsNil(t *testing.T
 }
 
 func TestGivenExistingPFCPAssociationWhenGetPFCPAssociationThenReturnsAssociation(t *testing.T) {
-	nodeID, err := ie.NewNodeID("2.3.4.5")
-	if err != nil {
-		t.Fatal(err)
-	}
+	nodeIDValue := "2.3.4.5"
 	pfcpAssociation := pfcp.PFCPAssociation{
-		NodeID: nodeID,
+		NodeID: nodeIDValue,
 	}
 	upfContext := &pfcp.UPFContext{
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
 	}
 
-	newPfcpAssociation := upfContext.GetPFCPAssociation(nodeID)
+	newPfcpAssociation := upfContext.GetPFCPAssociation(nodeIDValue)
 
 	if newPfcpAssociation == nil {
 		t.Fatalf("Expected PFCP association, got nil")
 	}
-
-	if !bytes.Equal(newPfcpAssociation.NodeID.Value, nodeID.Value) {
-		t.Fatalf("Expected PFCP association node ID %v, got %v", nodeID, newPfcpAssociation.NodeID)
+	if newPfcpAssociation.NodeID != nodeIDValue {
+		t.Fatalf("Expected PFCP association node ID %v, got %v", nodeIDValue, newPfcpAssociation.NodeID)
 	}
-
 }
 
 func TestGivenWhenRemovePFCPAssociationThenAssociationRemoved(t *testing.T) {
-	nodeID, err := ie.NewNodeID("1.2.3.4")
-	if err != nil {
-		t.Fatal(err)
-	}
+	nodeIDValue := "2.3.4.5"
 	pfcpAssociation := pfcp.PFCPAssociation{
-		NodeID: nodeID,
+		NodeID: nodeIDValue,
 	}
-
 	upfContext := &pfcp.UPFContext{
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
 	}
 
-	upfContext.RemovePFCPAssociation(nodeID)
+	upfContext.RemovePFCPAssociation(nodeIDValue)
 
 	if len(upfContext.PFCPAssociations) != 0 {
 		t.Fatalf("Expected 0 PFCP associations, got %d", len(upfContext.PFCPAssociations))

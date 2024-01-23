@@ -21,7 +21,8 @@ func (m *MockPfcpClient) SendPFCPAssociationReleaseResponse(response messages.PF
 func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDAddedToContext(t *testing.T) {
 	context := &pfcp.UPFContext{}
 	sequenceNumber := uint32(1)
-	nodeID, err := ie.NewNodeID("1.2.3.4")
+	nodeIDValue := "1.2.3.4"
+	nodeID, err := ie.NewNodeID(nodeIDValue)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,26 +38,21 @@ func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDAdded
 		t.Fatalf("Expected 1 PFCP association, got %d", len(context.PFCPAssociations))
 	}
 
-	if !context.IsKnownPFCPAssociation(nodeID) {
-		t.Fatalf("Expected node ID %v to be known", nodeID)
+	if !context.IsKnownPFCPAssociation(nodeIDValue) {
+		t.Fatalf("Expected node ID %v to be known", nodeIDValue)
 	}
-
 }
 
 func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAddedToContext(t *testing.T) {
-	knownNodeID, err := ie.NewNodeID("1.2.3.4")
-	if err != nil {
-		t.Fatal(err)
-	}
+	nodeIDValue := "1.2.3.4"
 	pfcpAssociation := pfcp.PFCPAssociation{
-		NodeID: knownNodeID,
+		NodeID: nodeIDValue,
 	}
-
 	context := &pfcp.UPFContext{
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
 	}
 	sequenceNumber := uint32(1)
-	nodeID, err := ie.NewNodeID("1.2.3.4")
+	nodeID, err := ie.NewNodeID(nodeIDValue)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,10 +67,9 @@ func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAdd
 		t.Fatalf("Expected 1 PFCP association, got %d", len(context.PFCPAssociations))
 	}
 
-	if !context.IsKnownPFCPAssociation(knownNodeID) {
-		t.Fatalf("Expected node ID %v to be known", knownNodeID)
+	if !context.IsKnownPFCPAssociation(nodeIDValue) {
+		t.Fatalf("Expected node ID %v to be known", nodeIDValue)
 	}
-
 }
 
 func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenResponseIsSent(t *testing.T) {
