@@ -41,7 +41,6 @@ func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDAdded
 	if !context.IsKnownPFCPAssociation(nodeIDValue) {
 		t.Fatalf("Expected node ID %v to be known", nodeIDValue)
 	}
-
 }
 
 func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAddedToContext(t *testing.T) {
@@ -53,7 +52,7 @@ func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAdd
 		PFCPAssociations: []*pfcp.PFCPAssociation{&pfcpAssociation},
 	}
 	sequenceNumber := uint32(1)
-	nodeID, err := ie.NewNodeID("1.2.3.4")
+	nodeID, err := ie.NewNodeID(nodeIDValue)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,7 +70,6 @@ func TestGivenNodeIDKnownWhenHandlePFCPAssociationSetupRequestThenNodeIDNotReAdd
 	if !context.IsKnownPFCPAssociation(nodeIDValue) {
 		t.Fatalf("Expected node ID %v to be known", nodeIDValue)
 	}
-
 }
 
 func TestGivenNodeIDNotKnownWhenHandlePFCPAssociationSetupRequestThenResponseIsSent(t *testing.T) {

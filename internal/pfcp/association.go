@@ -40,7 +40,11 @@ func HandlePFCPAssociationSetupRequest(upfContext *UPFContext, pfcpClient client
 		Cause:             cause,
 		RecoveryTimeStamp: recoveryTimeStamp,
 	}
-	pfcpClient.SendPFCPAssociationSetupResponse(pfcpAssociationSetupResponse, sequenceNumber)
+	err = pfcpClient.SendPFCPAssociationSetupResponse(pfcpAssociationSetupResponse, sequenceNumber)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	log.Printf("Node ID %v added to known node IDs\n", remoteNodeIDAddress)
 }
 
@@ -69,6 +73,10 @@ func HandlePFCPAssociationReleaseRequest(upfContext *UPFContext, pfcpClient clie
 		NodeID: upfNodeID,
 		Cause:  cause,
 	}
-	pfcpClient.SendPFCPAssociationReleaseResponse(pfcpAssociationReleaseResponse, sequenceNumber)
+	err = pfcpClient.SendPFCPAssociationReleaseResponse(pfcpAssociationReleaseResponse, sequenceNumber)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	log.Printf("Node ID %v removed from known node IDs\n", remoteNodeIDAddress)
 }

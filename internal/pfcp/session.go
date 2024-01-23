@@ -78,5 +78,9 @@ func HandlePFCPSessionEstablishmentRequest(upfContext *UPFContext, pfcpClient cl
 		NodeID: upfNodeID,
 		Cause:  cause,
 	}
-	pfcpClient.SendPFCPSessionEstablishmentResponse(pfcpSessionEstablishmentResponse, seid, sequenceNumber)
+	err = pfcpClient.SendPFCPSessionEstablishmentResponse(pfcpSessionEstablishmentResponse, seid, sequenceNumber)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 }

@@ -46,7 +46,6 @@ func TestGivenUnknownSessionWhenHandlePFCPSessionEstablishmentRequestThenSession
 	if len(upfContext.PFCPAssociations[0].Sessions) != 1 {
 		t.Fatalf("Expected 1 PFCP session, got %d", len(upfContext.PFCPAssociations[0].Sessions))
 	}
-
 }
 
 func TestGivenUnknownSessionWhenHandlePFCPSessionEstablishmentRequestThenPFCPResponseIsSent(t *testing.T) {

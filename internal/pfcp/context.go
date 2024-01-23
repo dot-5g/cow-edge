@@ -1,3 +1,4 @@
+// Package pfcp provides the PFCP context and the logic to handle PFCP messages.
 package pfcp
 
 type SourceInterface struct {

@@ -34,7 +34,6 @@ func TestGivenExistingPFCPAssociationWhenGetPFCPAssociationThenReturnsAssociatio
 	if newPfcpAssociation.NodeID != nodeIDValue {
 		t.Fatalf("Expected PFCP association node ID %v, got %v", nodeIDValue, newPfcpAssociation.NodeID)
 	}
-
 }
 
 func TestGivenWhenRemovePFCPAssociationThenAssociationRemoved(t *testing.T) {
