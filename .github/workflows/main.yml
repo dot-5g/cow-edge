@@ -45,7 +45,7 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      - uses: dominikh/staticcheck-action@v1.3.0
+      - uses: dominikh/staticcheck-action@v1.3.1
         with:
           install-go: false
           version: "v0.4.6"
